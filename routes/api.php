@@ -19,5 +19,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::namespace('Api')->group(function (){
     Route::resource('categorias', 'CategoriaController');
-    Route::resource('categorias', 'CategoriaController');
+    Route::resource('generos', 'GeneroController');
 });
