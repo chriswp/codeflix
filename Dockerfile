@@ -10,7 +10,6 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 WORKDIR /var/www
 RUN rm -rf /var/www/html
 
-
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 #RUN composer install
@@ -18,15 +17,11 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 #            &&  php artisan key:generate \
 #            && php artisan config:cache
 
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    libpq-dev
-
-RUN docker-php-ext-install pdo_pgsql mbstring
+RUN apk add postgresql-dev
+RUN docker-php-ext-install pdo pgsql pdo_pgsql
 
 #COPY . /var/www
 RUN ln -s public html
 
 EXPOSE 9000
-ENTRYPOINT ["php-fpm"]
+
