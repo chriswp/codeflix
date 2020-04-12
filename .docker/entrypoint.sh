@@ -2,4 +2,4 @@
 
 php artisan key:generate
 php artisan migrate --seed -R
-chmod +x -R ./storage
+chmod +x -R ../storage

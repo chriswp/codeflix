@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Categoria\CategoriaCreatedRequest;
 use App\Http\Requests\Categoria\CategoriaUpdatedRequest;
 use App\Models\Categoria;
+use Illuminate\Http\Request;
 
 class CategoriaController extends Controller
 {
@@ -18,7 +19,9 @@ class CategoriaController extends Controller
 
     public function store(CategoriaCreatedRequest $request)
     {
-        return Categoria::create($request->all());
+        $categoria = Categoria::create($request->all());
+        $categoria->refresh();
+        return $categoria;
     }
 
 
@@ -28,7 +31,7 @@ class CategoriaController extends Controller
     }
 
 
-    public function update(CategoriaUpdatedRequest $request, Categoria $categoria)
+    public function update(Request $request, Categoria $categoria)
     {
          $categoria->update($request->all());
          return $categoria;
