@@ -1,0 +1,104 @@
+<?php
+
+namespace Tests\Feature\Http\Controllers\Api;
+
+use App\Models\Categoria;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Tests\TestCase;
+
+class CategoriaControllerTest extends TestCase
+{
+    use DatabaseMigrations;
+
+    public function testIndex()
+    {
+        $categoria = factory(Categoria::class)->create();
+        $response = $this->get(route('categorias.index'));
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([$categoria->toArray()]);
+    }
+
+    public function testShow()
+    {
+        $categoria = factory(Categoria::class)->create();
+        $response = $this->get(route('categorias.show', ['categoria' => $categoria->id]));
+
+        $response
+            ->assertStatus(200)
+            ->assertJson($categoria->toArray());
+    }
+
+    public function testCreateValidation()
+    {
+        $response = $this->json('POST', route('categorias.store'), []);
+        $response->assertStatus(422)
+            ->assertJsonMissingValidationErrors(['ativo'])
+            ->assertJsonValidationErrors(['nome']);
+    }
+
+    public function testStore()
+    {
+        //valida se ao passar somente os nomes, os dados foram salvos corretamente
+        //por padrão o campo ativo, caso não informado, deve ser "true"
+        $response = $this->json('POST', route('categorias.store'), [
+            'nome' => 'categoria teste'
+        ]);
+
+        $id = $response->json('id');
+        $categoria = Categoria::find($id);
+
+        $response
+            ->assertStatus(201)
+            ->assertJson($categoria->toArray());
+
+        $this->assertTrue($response->json('ativo'));
+        $this->assertNull($response->json('descricao'));
+
+        //valida se os dados passando foram salvos corretamente
+        $response = $this->json('POST', route('categorias.store'), [
+            'nome' => 'categoria teste 2',
+            'descricao' => 'descricao',
+            'ativo' => false
+        ]);
+
+        $response->assertJsonFragment([
+            'ativo' => false,
+            'descricao' => 'descricao',
+        ]);
+    }
+
+    public function testUpdate()
+    {
+        //validando se os campos sao alterados corretamente
+        $categoria = factory(Categoria::class)->create([
+            'ativo' => false,
+            'descricao' => 'descricao'
+        ]);
+
+        $response = $this->json('PUT', route('categorias.update', ['categoria' => "{$categoria->id}"]), [
+            'nome' => 'categoria update',
+            'ativo' => true,
+            'descricao' => 'test'
+        ]);
+
+        $id = $response->json('id');
+        $categoria = Categoria::find($id);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson($categoria->toArray())
+            ->assertJsonFragment([
+                'ativo' => true,
+                'descricao' => 'test'
+            ]);
+
+
+        //validando se ao passar uma string vazia no campo descricao, se vai ser válido
+        $response = $this->json('PUT', route('categorias.update', ['categoria' => "{$categoria->id}"]), [
+            'descricao' => ''
+        ]);
+        $this->assertNull($response->json('descricao'));
+    }
+}

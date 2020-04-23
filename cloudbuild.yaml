@@ -1,0 +1,24 @@
+steps:
+  - id: "Rodando docker compose"
+    name: 'gcr.io/$PROJECT_ID/docker-compose'
+    args: ['-f', 'docker-compose.prod.cloudbuild.yaml','up','-d']
+
+  - id: "Rodando composer"
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['exec','-t','app','composer','install']
+
+  - id: "Copiando .env"
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['exec','-t','app','cp','.env.example','.env']
+
+  - id: "gerando a chave"
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['exec','-t','app','php','/var/www/artisan','key:generate']
+
+  - id: "executando migrations"
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['exec','-t','app','php','/var/www/artisan','migrate','--seed']
+
+  - id: "rodando testes"
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['exec','-t','app','php','/var/www/vendor/bin/phpunit','-c','/var/www/phpunit.xml']
