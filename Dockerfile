@@ -16,4 +16,3 @@ RUN docker-php-ext-install pdo pgsql pdo_pgsql
 RUN ln -s public html
 
 EXPOSE 9000
-
