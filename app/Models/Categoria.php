@@ -10,7 +10,8 @@ class Categoria extends Model
 {
     use SoftDeletes, GenerateUuid;
 
-    protected $fillable = ['nome','descricao','ativo'];
-    protected $dates = ['deleted_at'];
+    public $incrementing = false;
     protected $casts = ['id' => 'string'];
+    protected $fillable = ['nome', 'descricao', 'ativo'];
+    protected $dates = ['deleted_at'];
 }
