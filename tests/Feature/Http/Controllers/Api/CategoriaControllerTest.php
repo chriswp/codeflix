@@ -101,4 +101,13 @@ class CategoriaControllerTest extends TestCase
         ]);
         $this->assertNull($response->json('descricao'));
     }
+
+    public function testDelete()
+    {
+        $categoria = factory(Categoria::class)->create()->first();
+        $response = $this->json('DELETE', route('categorias.destroy', ['categoria' => "{$categoria->id}"]));
+        $response->assertStatus(204);
+        $this->assertNull(Categoria::find($categoria->id));
+        $this->assertNotNull(Categoria::withTrashed()->find($categoria->id));
+    }
 }

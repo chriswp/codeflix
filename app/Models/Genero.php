@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Genero extends Model
 {
-    use SoftDeletes,GenerateUuid;
+    use SoftDeletes, GenerateUuid;
 
     public $incrementing = false;
     protected $fillable = ['nome','ativo'];
