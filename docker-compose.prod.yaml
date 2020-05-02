@@ -38,10 +38,9 @@ services:
     ports:
       - '15432:5432'
     environment:
-      POSTGRES_DB: codeflix
+      POSTGRES_DB: codeflix_test
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
-      PGDATA: /data/postgres
     volumes:
       - './docker/postgres:/var/lib/postgresql/data'
     networks:
