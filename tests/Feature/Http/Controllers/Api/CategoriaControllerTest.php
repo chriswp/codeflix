@@ -4,11 +4,13 @@ namespace Tests\Feature\Http\Controllers\Api;
 
 use App\Models\Categoria;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\TestResponse;
 use Tests\TestCase;
+use Tests\Traits\ValidationsTest;
 
 class CategoriaControllerTest extends TestCase
 {
-    use DatabaseMigrations;
+    use DatabaseMigrations, ValidationsTest;
 
     public function testIndex()
     {
@@ -30,12 +32,19 @@ class CategoriaControllerTest extends TestCase
             ->assertJson($categoria->toArray());
     }
 
-    public function testCreateValidation()
+    public function testStoreValidation()
     {
         $response = $this->json('POST', route('categorias.store'), []);
-        $response->assertStatus(422)
-            ->assertJsonMissingValidationErrors(['ativo'])
-            ->assertJsonValidationErrors(['nome']);
+        $this->assertValidationData($response,['nome'],'required');
+        $response->assertJsonMissingValidationErrors(['ativo']);
+
+        $response = $this->json('POST', route('categorias.store'), [
+            'nome' => str_repeat('a',256),
+            'ativo' => 'a'
+        ]);
+
+        $this->assertValidationData($response,['nome'],'max.string',['max' => 255]);
+        $this->assertValidationData($response,['ativo'],'boolean');
     }
 
     public function testStore()
