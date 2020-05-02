@@ -6,11 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class CategoriaCreatedRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
     public function authorize()
     {
         return true;
@@ -22,16 +17,6 @@ class CategoriaCreatedRequest extends FormRequest
         return [
             'nome' => 'required|max:255|unique:categorias',
             'ativo' => 'boolean'
-        ];
-    }
-
-    public function messages()
-    {
-        return [
-            'nome.required' => 'o nome é um campo obrigatório',
-            'nome.unique' => 'o nome informado já foi cadastrado',
-            'nome.max' => 'o nome deve possuir no máximo :max caracteres',
-            'ativo.boolean' => 'o valor deve ser um booleano true/false'
         ];
     }
 }
