@@ -38,11 +38,11 @@ services:
     ports:
       - '15432:5432'
     environment:
-      POSTGRES_DB: codeflix_test
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
     volumes:
       - './docker/postgres:/var/lib/postgresql/data'
+      - './.docker/postgres:/docker-entrypoint-initdb.d'
     networks:
       - app-network
   redis:
