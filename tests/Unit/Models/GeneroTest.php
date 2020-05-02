@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Models;
 
 use App\Models\Genero;
 use App\Models\Traits\GenerateUuid;
@@ -9,11 +9,19 @@ use PHPUnit\Framework\TestCase;
 
 class GeneroTest extends TestCase
 {
+    /** @var Genero */
+    private $genero ;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->genero =  new Genero();
+    }
+
     public function testFillableAttribute()
     {
         $fillable = ['nome', 'ativo'];
-        $categoria = new Genero();
-        $this->assertEquals($fillable, $categoria->getFillable());
+        $this->assertEquals($fillable, $this->genero->getFillable());
     }
 
     public function testIfUseTraits()
@@ -26,28 +34,23 @@ class GeneroTest extends TestCase
         $this->assertEquals($traits, $traitsGenero);
     }
 
-    public function testCatsAttribute()
+    public function testCastsAttribute()
     {
         $casts = ['id' => 'string'];
-        $categoria = new Genero();
-        $castsGenero = $categoria->getCasts();
+        $castsGenero = $this->genero->getCasts();
         $this->assertEquals($casts, $castsGenero);
     }
 
     public function testIncrementsAttribute()
     {
-        $categoria = new Genero();
-        $this->assertFalse($categoria->incrementing);
+        $this->assertFalse($this->genero->incrementing);
     }
 
     public function testeDatesAttribute()
     {
         $datas = ['deleted_at', 'created_at', 'updated_at'];
-        $categoria = new Genero();
-        $dataGeneros = $categoria->getDates();
-        foreach ($datas as $data) {
-            $this->assertContains($data, $dataGeneros);
-        }
+        $dataGeneros = $this->genero->getDates();
+        $this->assertEqualsCanonicalizing($datas,$dataGeneros);
         $this->assertCount(count($dataGeneros), $dataGeneros);
     }
 }
