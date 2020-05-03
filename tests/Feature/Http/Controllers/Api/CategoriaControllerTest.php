@@ -60,7 +60,7 @@ class CategoriaControllerTest extends TestCase
             'descricao' => 'descricao teste',
             'ativo' => false
         ];
-        
+
         $response = $this->assertStore($dadosCategoria,
             array_merge($dadosCategoria, ['ativo' => false, 'descricao' => 'descricao teste']));
         $response->assertJsonStructure(['created_at', 'updated_at']);
@@ -98,10 +98,11 @@ class CategoriaControllerTest extends TestCase
 
     public function testDelete()
     {
-        $response = $this->json('DELETE', route('categorias.destroy', ['categoria' => "{$this->categoria->id}"]));
+        $categoria = factory(Categoria::class)->create();
+        $response = $this->json('DELETE', route('categorias.destroy', ['categoria' => "{$categoria->id}"]));
         $response->assertStatus(204);
-        $this->assertNull(Categoria::find($this->categoria->id));
-        $this->assertNotNull(Categoria::withTrashed()->find($this->categoria->id));
+        $this->assertNull(Categoria::find($categoria->id));
+        $this->assertNotNull(Categoria::withTrashed()->find($categoria->id));
     }
 
     protected function model()

@@ -11,8 +11,8 @@ class Genero extends Model
     use SoftDeletes, GenerateUuid;
 
     public $incrementing = false;
+    protected $casts = ['id' => 'string'];
     protected $fillable = ['nome','ativo'];
     protected $dates = ['deleted_at'];
-    protected $casts = ['id' => 'string'];
 
 }

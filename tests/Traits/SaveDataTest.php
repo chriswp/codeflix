@@ -36,13 +36,13 @@ trait SaveDataTest
     {
         $model = $this->model();
         $tabela = (new $model)->getTable();
-        $this->assertDatabaseHas($tabela, $databaseTest + ['id' => $response->json('id')]);
+        $this->assertDatabaseHas($tabela, array_merge($databaseTest, ['id' => $response->json('id')]));
     }
 
     private function assertJsonResponseContent(TestResponse $response, array $databaseTest, array $jsonTest = null)
     {
         $testResponse = $jsonTest ?? $databaseTest;
-        $response->assertJsonFragment($testResponse + ['id' => $response->json('id')]);
+        $response->assertJsonFragment(array_merge($testResponse , ['id' => $response->json('id')]));
         return $response;
     }
 }
