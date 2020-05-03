@@ -1,17 +1,29 @@
 <?php
 
-namespace App\Models;
+namespace Tests\Stubs\Models;
 
-use App\Models\Traits\GenerateUuid;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class Categoria extends Model
+class CategoriaStub extends Model
 {
-    use SoftDeletes, GenerateUuid;
+    protected $table = 'categoria_stubs';
+    protected $fillable = ['nome','descricao'];
 
-    public $incrementing = false;
-    protected $casts = ['id' => 'string'];
-    protected $fillable = ['nome', 'descricao', 'ativo'];
-    protected $dates = ['deleted_at'];
+
+    public static function createTable(){
+        Schema::create('categoria_stubs', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('nome');
+            $table->string('descricao')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    public static function dropTable()
+    {
+        Schema::dropIfExists('categoria_stubs');
+    }
+
 }
