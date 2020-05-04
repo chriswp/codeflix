@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 
 
 use App\Http\Requests\Categoria\CategoriaCreatedRequest;
-use Illuminate\Http\Request;
 
 abstract class BasicCrudController
 {
