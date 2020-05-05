@@ -4,119 +4,119 @@ namespace Tests\Feature\Http\Controllers\Api;
 
 use App\Models\Categoria;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\TestResponse;
 use Tests\TestCase;
+use Tests\Traits\SaveDataTest;
 use Tests\Traits\ValidationsTest;
 
 class CategoriaControllerTest extends TestCase
 {
-    use DatabaseMigrations, ValidationsTest;
+    use DatabaseMigrations, ValidationsTest, SaveDataTest;
+
+    /** @var Categoria */
+    private $categoria;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->categoria = factory(Categoria::class)->create();
+    }
 
     public function testIndex()
     {
-        $categoria = factory(Categoria::class)->create();
         $response = $this->get(route('categorias.index'));
-
         $response
             ->assertStatus(200)
-            ->assertJson([$categoria->toArray()]);
+            ->assertJson([$this->categoria->toArray()]);
     }
 
     public function testShow()
     {
-        $categoria = factory(Categoria::class)->create();
-        $response = $this->get(route('categorias.show', ['categoria' => $categoria->id]));
+        $response = $this->get(route('categorias.show', ['categoria' => $this->categoria->id]));
 
         $response
             ->assertStatus(200)
-            ->assertJson($categoria->toArray());
+            ->assertJson($this->categoria->toArray());
     }
 
     public function testStoreValidation()
     {
         $response = $this->json('POST', route('categorias.store'), []);
-        $this->assertValidationData($response,['nome'],'required');
+        $this->assertValidationData($response, ['nome'], 'required');
         $response->assertJsonMissingValidationErrors(['ativo']);
 
         $response = $this->json('POST', route('categorias.store'), [
-            'nome' => str_repeat('a',256),
+            'nome' => str_repeat('a', 256),
             'ativo' => 'a'
         ]);
 
-        $this->assertValidationData($response,['nome'],'max.string',['max' => 255]);
-        $this->assertValidationData($response,['ativo'],'boolean');
+        $this->assertValidationData($response, ['nome'], 'max.string', ['max' => 255]);
+        $this->assertValidationData($response, ['ativo'], 'boolean');
     }
 
     public function testStore()
     {
-        //valida se ao passar somente os nomes, os dados foram salvos corretamente
-        //por padrão o campo ativo, caso não informado, deve ser "true"
-        $response = $this->json('POST', route('categorias.store'), [
-            'nome' => 'categoria teste'
-        ]);
-
-        $id = $response->json('id');
-        $categoria = Categoria::find($id);
-
-        $response
-            ->assertStatus(201)
-            ->assertJson($categoria->toArray());
-
-        $this->assertTrue($response->json('ativo'));
-        $this->assertNull($response->json('descricao'));
-
-        //valida se os dados passando foram salvos corretamente
-        $response = $this->json('POST', route('categorias.store'), [
+        $dadosCategoria = [
             'nome' => 'categoria teste 2',
-            'descricao' => 'descricao',
+            'descricao' => 'descricao teste',
             'ativo' => false
-        ]);
+        ];
 
-        $response->assertJsonFragment([
-            'ativo' => false,
-            'descricao' => 'descricao',
-        ]);
+        $response = $this->assertStore($dadosCategoria,
+            array_merge($dadosCategoria, ['ativo' => false, 'descricao' => 'descricao teste']));
+        $response->assertJsonStructure(['created_at', 'updated_at']);
+    }
+
+    public function testStoreSomenteNomeInformado()
+    {
+        $dadosCategoria = [
+            'nome' => 'categoria teste'
+        ];
+        $response = $this->assertStore($dadosCategoria,
+            array_merge($dadosCategoria, ['ativo' => true, 'descricao' => null]));
+        $response->assertJsonStructure(['created_at', 'updated_at']);
     }
 
     public function testUpdate()
     {
-        //validando se os campos sao alterados corretamente
-        $categoria = factory(Categoria::class)->create([
-            'ativo' => false,
-            'descricao' => 'descricao'
-        ]);
-
-        $response = $this->json('PUT', route('categorias.update', ['categoria' => "{$categoria->id}"]), [
+        $dadosCategoria = [
             'nome' => 'categoria update',
-            'ativo' => true,
+            'ativo' => false,
             'descricao' => 'test'
-        ]);
+        ];
 
-        $id = $response->json('id');
-        $categoria = Categoria::find($id);
+        $response = $this->assertUpdate($dadosCategoria,
+            array_merge($dadosCategoria,
+                ['deleted_at' => null, 'ativo' => false, 'nome' => 'categoria update', 'descricao' => 'test']));
+        $response->assertJsonStructure(['created_at', 'updated_at']);
+    }
 
-        $response
-            ->assertStatus(200)
-            ->assertJson($categoria->toArray())
-            ->assertJsonFragment([
-                'ativo' => true,
-                'descricao' => 'test'
-            ]);
-
-
-        //validando se ao passar uma string vazia no campo descricao, se vai ser válido
-        $response = $this->json('PUT', route('categorias.update', ['categoria' => "{$categoria->id}"]), [
-            'descricao' => ''
-        ]);
-        $this->assertNull($response->json('descricao'));
+    public function testUpdateDescricaoNull()
+    {
+        $dadosCategoria['descricao'] = '';
+        $this->assertUpdate($dadosCategoria, array_merge($dadosCategoria, ['descricao' => null]));
     }
 
     public function testDelete()
     {
-        $categoria = factory(Categoria::class)->create()->first();
+        $categoria = factory(Categoria::class)->create();
         $response = $this->json('DELETE', route('categorias.destroy', ['categoria' => "{$categoria->id}"]));
         $response->assertStatus(204);
         $this->assertNull(Categoria::find($categoria->id));
         $this->assertNotNull(Categoria::withTrashed()->find($categoria->id));
+    }
+
+    protected function model()
+    {
+        return Categoria::class;
+    }
+
+    protected function routeStore()
+    {
+        return route('categorias.store');
+    }
+
+    protected function routeUpdate()
+    {
+        return route('categorias.update', ['categoria' => $this->categoria->id]);
     }
 }
