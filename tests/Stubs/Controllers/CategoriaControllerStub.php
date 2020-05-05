@@ -15,5 +15,19 @@ class CategoriaControllerStub extends BasicCrudController
         return CategoriaStub::class;
     }
 
+    protected function rulesStore()
+    {
+        return [
+            'nome' => 'required|max:255|unique:categoria_stubs',
+            'description' => 'nullable'
+        ];
+    }
 
+    protected function rulesUpdate()
+    {
+        return [
+            'nome' => 'required|max:255',
+            'description' => 'nullable'
+        ];
+    }
 }

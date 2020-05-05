@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Http\Controllers\Api;
 
-use App\Http\Requests\Categoria\CategoriaCreatedRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Tests\Stubs\Controllers\CategoriaControllerStub;
@@ -39,12 +38,27 @@ class BasicCrudControllerTest extends TestCase
     public function testInvalidationData()
     {
         $this->expectException(ValidationException::class);
-        $request = \Mockery::mock(CategoriaCreatedRequest::class);
+        $request = \Mockery::mock(Request::class);
         $request
             ->shouldReceive('all')
             ->once()
-            ->andReturn(['nome' => null]);
+            ->andReturn(['nome' => '']);
         $this->controller->store($request);
+    }
+
+    public function testStore()
+    {
+        $request = \Mockery::mock(Request::class);
+        $request
+            ->shouldReceive('all')
+            ->once()
+            ->andReturn(['nome' => 'categoria 1', 'descricao' => 'descricao teste']);
+        $res = $this->controller->store($request);
+
+        $this->assertEquals(
+            CategoriaStub::find(1)->toArray(),
+            $res->toarray()
+        );
     }
 
 
