@@ -5,6 +5,7 @@ namespace Tests\Feature\Models;
 use App\Models\Categoria;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 
 class CategoriaTest extends TestCase
@@ -49,5 +50,16 @@ class CategoriaTest extends TestCase
         $categoria = factory(Categoria::class)->create();
         $remover = $categoria->delete();
         $this->assertTrue($remover);
+    }
+
+    public function testValidateUuid()
+    {
+        $dados = [
+            'nome' => 'categoria'
+        ];
+        $categoria = Categoria::create($dados);
+        $uuid = $categoria->id;
+        $uuidValido = Uuid::isValid($uuid);
+        $this->assertTrue($uuidValido);
     }
 }
