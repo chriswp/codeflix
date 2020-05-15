@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Categoria\CategoriaCreatedRequest;
-use App\Http\Requests\Categoria\CategoriaUpdatedRequest;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
 
