@@ -2,38 +2,29 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\Genero;
-use Illuminate\Http\Request;
 
-class GeneroController extends Controller
+class GeneroController extends BasicCrudController
 {
-    public function index()
+
+    protected function model()
     {
-        return Genero::all();
+        return Genero::class;
     }
 
-    public function store(Request $request)
+    protected function rulesStore()
     {
-        $genero = Genero::create($request->all());
-        $genero->refresh();
-        return $genero;
+        return [
+            'nome' => 'required|max:255|unique:generos',
+            'ativo' => 'boolean'
+        ];
     }
 
-    public function show(Genero $genero)
+    protected function rulesUpdate()
     {
-        return $genero;
-    }
-
-    public function update(Request $request, Genero $genero)
-    {
-        $genero->update($request->all());
-        return $genero;
-    }
-
-    public function destroy(Genero $genero)
-    {
-        $genero->delete();
-        return response()->noContent();
+        return [
+            'nome' => 'required|max:255|unique:generos,id,'.$this->get('id'),
+            'ativo' => 'boolean'
+        ];
     }
 }
