@@ -23,7 +23,7 @@ class GeneroController extends BasicCrudController
     protected function rulesUpdate()
     {
         return [
-            'nome' => 'required|max:255|unique:generos,id,'.$this->get('id'),
+            'nome' => 'required|max:255',
             'ativo' => 'boolean'
         ];
     }

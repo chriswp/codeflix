@@ -92,7 +92,11 @@ class CategoriaControllerTest extends TestCase
 
     public function testUpdateDescricaoNull()
     {
-        $dadosCategoria['descricao'] = '';
+        $dadosCategoria = [
+            'nome' => 'categoria update',
+            'ativo' => false,
+            'descricao' => ''
+        ];
         $this->assertUpdate($dadosCategoria, array_merge($dadosCategoria, ['descricao' => null]));
     }
 

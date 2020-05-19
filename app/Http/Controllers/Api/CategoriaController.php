@@ -24,7 +24,7 @@ class CategoriaController extends BasicCrudController
     protected function rulesUpdate()
     {
         return [
-            'nome' => 'required|max:255|unique:categorias,id,'.$this->get('id'),
+            'nome' => 'required|max:255',
             'descricao' => 'nullable',
             'ativo' => 'boolean'
         ];

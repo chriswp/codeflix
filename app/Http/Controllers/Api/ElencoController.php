@@ -17,7 +17,7 @@ class ElencoController extends BasicCrudController
     protected function rulesStore()
     {
         return [
-            'nome' => 'required|unique:elencos',
+            'nome' => 'required|max:255|unique:elencos',
             'tipo' => 'required|numeric|in:1,2'
         ];
     }
@@ -25,7 +25,7 @@ class ElencoController extends BasicCrudController
     protected function rulesUpdate()
     {
         return [
-            'nome' => 'required|unique:elencos,id,'.$this->get('id'),
+            'nome' => 'required|max:255',
             'tipo' => 'required|numeric|in:1,2'
         ];
     }

@@ -4,10 +4,11 @@ namespace App\Models;
 
 use App\Models\Traits\GenerateUuid;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Elenco extends Model
 {
-    use GenerateUuid;
+    use SoftDeletes, GenerateUuid;
 
     const DIRETOR = 1;
     const ATOR = 2;

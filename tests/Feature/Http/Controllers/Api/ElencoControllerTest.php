@@ -42,57 +42,47 @@ class ElencoControllerTest extends TestCase
     {
         $response = $this->json('POST', route('elencos.store'), []);
         $this->assertValidationData($response, ['nome'], 'required');
-        $response->assertJsonMissingValidationErrors(['tipo']);
+        $this->assertValidationData($response, ['tipo'], 'required');
 
         $response = $this->json('POST', route('elencos.store'), [
             'nome' => str_repeat('a', 256),
-            'tipo' => Elenco::DIRETOR
+            'tipo' => 'abc'
         ]);
 
         $this->assertValidationData($response, ['nome'], 'max.string', ['max' => 255]);
-        $this->assertValidationData($response, ['tipo'], 'in', ['in' => [Elenco::DIRETOR, Elenco::ATOR]]);
+        $this->assertValidationData($response, ['tipo'], 'numeric');
+
+        $dadosElenco = $this->elenco->only('nome','tipo');
+        $response = $this->json('POST', route('elencos.store'), $dadosElenco);
+        $this->assertValidationData($response, ['nome'], 'unique');
+
+        $dadosElenco['tipo'] = 0;
+        $response = $this->json('POST', route('elencos.store'), $dadosElenco);
+        $this->assertValidationData($response, ['tipo'], 'in');
     }
 
     public function testStore()
     {
         $dadosElenco = [
-            'nome' => 'categoria teste 2',
-            'ativo' => false
+            'nome' => 'elenco teste 2',
+            'tipo' => Elenco::DIRETOR
         ];
 
-        $response = $this->assertStore($dadosElenco,
-            array_merge($dadosElenco, ['ativo' => false, 'descricao' => 'descricao teste']));
+        $response = $this->assertStore($dadosElenco,$dadosElenco);
         $response->assertJsonStructure(['created_at', 'updated_at']);
     }
 
-    public function testStoreSomenteNomeInformado()
-    {
-        $dadosElenco = [
-            'nome' => 'categoria teste'
-        ];
-        $response = $this->assertStore($dadosElenco,
-            array_merge($dadosElenco, ['ativo' => true, 'descricao' => null]));
-        $response->assertJsonStructure(['created_at', 'updated_at']);
-    }
 
     public function testUpdate()
     {
         $dadosElenco = [
-            'nome' => 'categoria update',
-            'ativo' => false,
-            'descricao' => 'test'
+            'nome' => 'elenco update 2',
+            'tipo' => Elenco::ATOR
         ];
 
         $response = $this->assertUpdate($dadosElenco,
-            array_merge($dadosElenco,
-                ['deleted_at' => null, 'ativo' => false, 'nome' => 'categoria update', 'descricao' => 'test']));
+            array_merge($dadosElenco,['deleted_at' => null, 'nome' => 'elenco update 2', 'tipo' => Elenco::ATOR]));
         $response->assertJsonStructure(['created_at', 'updated_at']);
-    }
-
-    public function testUpdateDescricaoNull()
-    {
-        $dadosElenco['descricao'] = '';
-        $this->assertUpdate($dadosElenco, array_merge($dadosElenco, ['descricao' => null]));
     }
 
     public function testDelete()
