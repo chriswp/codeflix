@@ -2,45 +2,32 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Categoria\CategoriaCreatedRequest;
-use App\Http\Requests\Categoria\CategoriaUpdatedRequest;
 use App\Models\Categoria;
-use Illuminate\Http\Request;
 
-class CategoriaController extends Controller
+class CategoriaController extends BasicCrudController
 {
 
-    public function index()
+    protected function model()
     {
-        return Categoria::all();
+       return Categoria::class;
     }
 
-
-    public function store(CategoriaCreatedRequest $request)
+    protected function rulesStore()
     {
-        $categoria = Categoria::create($request->all());
-        $categoria->refresh();
-        return $categoria;
+        return [
+            'nome' => 'required|max:255|unique:categorias',
+            'descricao' => 'nullable',
+            'ativo' => 'boolean'
+        ];
     }
 
-
-    public function show(Categoria $categoria)
+    protected function rulesUpdate()
     {
-        return $categoria;
+        return [
+            'nome' => 'required|max:255',
+            'descricao' => 'nullable',
+            'ativo' => 'boolean'
+        ];
     }
 
-
-    public function update(Request $request, Categoria $categoria)
-    {
-         $categoria->update($request->all());
-         return $categoria;
-    }
-
-
-    public function destroy(Categoria $categoria)
-    {
-        $categoria->delete();
-        return response()->noContent();
-    }
 }

@@ -23,4 +23,5 @@ Route::namespace('Api')->group(function (){
     ];
     Route::resource('categorias', 'CategoriaController',$exceptCreateEdit);
     Route::resource('generos', 'GeneroController',$exceptCreateEdit);
+    Route::resource('elencos', 'ElencoController',$exceptCreateEdit);
 });
