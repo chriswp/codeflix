@@ -25,7 +25,7 @@ class ElencoController extends BasicCrudController
     protected function rulesUpdate()
     {
         return [
-            'nome' => 'required|max:255',
+            'nome' => 'required|max:255|unique:elencos,id,'.request()->route('elenco'),
             'tipo' => 'required|numeric|in:1,2'
         ];
     }

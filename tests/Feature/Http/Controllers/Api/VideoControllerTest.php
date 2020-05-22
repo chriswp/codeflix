@@ -2,14 +2,15 @@
 
 namespace Tests\Feature\Http\Controllers\Api;
 
-use App\Models\video;
+use App\Models\Video;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use Tests\Traits\SaveDataTest;
+use Tests\Traits\ValidationsTest;
 
 class VideoControllerTest extends TestCase
 {
-    use DatabaseMigrations, SaveDataTest;
+    use DatabaseMigrations, SaveDataTest, ValidationsTest;
 
     /** @var Video */
     private $video;
@@ -23,7 +24,6 @@ class VideoControllerTest extends TestCase
     public function testIndex()
     {
         $response = $this->get(route('videos.index'));
-
         $response
             ->assertStatus(200)
             ->assertJson([$this->video->toArray()]);
@@ -37,7 +37,7 @@ class VideoControllerTest extends TestCase
             ->assertJson($this->video->toArray());
     }
 
-    public function testStore()
+    public function testSave()
     {
         $dadosVideo = [];
         $response = $this->assertStore($dadosVideo,
@@ -45,23 +45,22 @@ class VideoControllerTest extends TestCase
         $response->assertJsonStructure(['created_at', 'updated_at']);
     }
 
-    public function testStoreCampoAtivoNaoInformado()
+    public function testInvalidationRequired()
     {
-        $dadoVideo = [];
-        $response = $this->assertStore($dadoVideo, array_merge($dadoVideo, ['ativo' => true]));
-        $response->assertJsonStructure(['created_at', 'updated_at']);
-    }
-
-    public function testUpdate()
-    {
-        $video = [
-            'nome' => 'video update',
-            'ativo' => false
+        $dados = [
+            'titulo' => '',
+            'descricao' => '',
+            'ano_lancamento' => '',
+            'liberado' => '',
+            'classificacao' => '',
+            'duracao' => '',
+            'categorias_id' => '',
+            'generos_id' => '',
         ];
 
-        $this->assertUpdate($video,
-            array_merge($video, ['deleted_at' => null, 'nome' => 'video update', 'ativo' => false]));
-    }
+        $this->assertValidationData('');
+   }
+
 
     public function testDelete()
     {

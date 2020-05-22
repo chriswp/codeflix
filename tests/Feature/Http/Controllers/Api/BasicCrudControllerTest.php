@@ -36,8 +36,7 @@ class BasicCrudControllerTest extends TestCase
         $this->assertEquals([$categoria->toArray()], $resposta);
     }
 
-
-    public function testInvalidationData()
+    public function testInvalidationDataInStoreAction()
     {
         $this->expectException(ValidationException::class);
         $request = \Mockery::mock(Request::class);
@@ -48,6 +47,18 @@ class BasicCrudControllerTest extends TestCase
         $this->controller->store($request);
     }
 
+    public function testInvalidationDataInUpdateAction()
+    {
+        $this->expectException(ValidationException::class);
+        $request = \Mockery::mock(Request::class);
+        $request
+            ->shouldReceive('all')
+            ->once()
+            ->andReturn(['nome' => '']);
+        $categoria = CategoriaStub::create(['nome' => 'categoria stub', 'descricao' => 'stub teste']);
+        $this->controller->update($request, $categoria->id);
+    }
+
     public function testStore()
     {
         $request = \Mockery::mock(Request::class);
@@ -56,10 +67,9 @@ class BasicCrudControllerTest extends TestCase
             ->once()
             ->andReturn(['nome' => 'categoria 1', 'descricao' => 'descricao teste']);
         $res = $this->controller->store($request);
-
         $this->assertEquals(
             CategoriaStub::find(1)->toArray(),
-            $res->toarray()
+            $res->toArray()
         );
     }
 
@@ -100,7 +110,7 @@ class BasicCrudControllerTest extends TestCase
             ->shouldReceive('all')
             ->once()
             ->andReturn(['nome' => 'categoria 1', 'descricao' => 'descricao teste']);
-        $res = $this->controller->update($request,$categoria->id);
+        $res = $this->controller->update($request, $categoria->id);
 
         $this->assertEquals(
             CategoriaStub::find(1)->toArray(),
@@ -114,7 +124,7 @@ class BasicCrudControllerTest extends TestCase
         $response = $this->controller->destroy($categoria->id);
         $this->createTestResponse($response)
             ->assertStatus(204);
-        $this->assertCount(0,CategoriaStub::all());
+        $this->assertCount(0, CategoriaStub::all());
     }
 
 
