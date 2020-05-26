@@ -16,7 +16,7 @@ class VideoController extends BasicCrudController
         $this->rules = [
             'titulo' => 'required|max:255',
             'descricao' => 'required',
-            'ano_lancamento' => 'required|date_format:Y',
+            'ano_lancamento' => 'required|integer|date_format:Y',
             'liberado' => 'boolean',
             'classificacao' => 'required|in:' . implode(',', Video::CLASSIFICACOES),
             'duracao' => 'required|integer',
@@ -47,6 +47,7 @@ class VideoController extends BasicCrudController
         $video = DB::transaction(function () use ($validationData, $request, $self) {
             $video = $this->model()::create($validationData);
             $self->handleRelations($video, $request);
+            return $video;
         });
         $video->refresh();
 
@@ -61,6 +62,7 @@ class VideoController extends BasicCrudController
         $video = DB::transaction(function () use ($validationData, $request, $self, $video) {
             $video->update($validationData);
             $self->handleRelations($video, $request);
+            return $video;
         });
 
         return $video;
