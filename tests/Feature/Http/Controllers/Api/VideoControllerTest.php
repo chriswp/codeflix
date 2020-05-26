@@ -58,7 +58,8 @@ class VideoControllerTest extends TestCase
             'generos_id' => '',
         ];
 
-        $this->assertValidationData('');
+        $this->assertInvalidationDataInStoreAction($dados,'required');
+        $this->assertInvalidationDataInUpdateAction($dados,'required');
    }
 
 

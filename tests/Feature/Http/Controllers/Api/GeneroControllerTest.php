@@ -6,10 +6,11 @@ use App\Models\Genero;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use Tests\Traits\SaveDataTest;
+use Tests\Traits\ValidationsTest;
 
 class GeneroControllerTest extends TestCase
 {
-    use DatabaseMigrations, SaveDataTest;
+    use DatabaseMigrations, SaveDataTest,ValidationsTest;
 
     /** @var Genero */
     private $genero;
@@ -43,6 +44,28 @@ class GeneroControllerTest extends TestCase
         $response = $this->assertStore($dadosGenero,
             array_merge($dadosGenero, ['ativo' => false, 'nome' => 'genero 1']));
         $response->assertJsonStructure(['created_at', 'updated_at']);
+    }
+
+    public function testInvalidationData()
+    {
+        $dados = ['nome' => null];
+        $this->assertInvalidationDataInStoreAction($dados,'required');
+        $this->assertInvalidationDataInUpdateAction($dados,'required');
+
+        $dados = ['nome' => str_repeat('a', 256)];
+        $this->assertInvalidationDataInStoreAction($dados,'max.string', ['max' => 255]);
+        $this->assertInvalidationDataInUpdateAction($dados,'max.string',['max' => 255]);
+
+        $dados = ['ativo' => 'true'];
+        $this->assertInvalidationDataInStoreAction($dados,'boolean');
+        $this->assertInvalidationDataInUpdateAction($dados,'boolean');
+
+        $dados = $this->genero->only('nome');
+        $this->assertInvalidationDataInStoreAction($dados,'unique');
+
+        $dadosUpdate = $dados;
+        $this->genero = factory(Genero::class)->create();
+        $this->assertInvalidationDataInUpdateAction($dadosUpdate,'unique');
     }
 
     public function testStoreCampoAtivoNaoInformado()

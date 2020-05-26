@@ -62,7 +62,9 @@ class ElencoControllerTest extends TestCase
         $dados = $this->elenco->only('nome');
         $this->assertInvalidationDataInStoreAction($dados,'unique');
 
-        // TODO: acrescentar valdiacao de unique update
+        $dadosUpdate = $dados;
+        $this->elenco = factory(Elenco::class)->create();
+        $this->assertInvalidationDataInUpdateAction($dadosUpdate,'unique');
 
          $dados = [
             'tipo' => 0
