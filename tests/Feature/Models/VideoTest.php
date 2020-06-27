@@ -15,30 +15,39 @@ class VideoTest extends TestCase
     public function testCreate()
     {
         $dados = [
-
+            'titulo' => 'titulo',
+            'descricao' => 'descricao',
+            'ano_lancamento' => 2010,
+            'classificacao' => Video::CLASSIFICACOES[0],
+            'duracao' => 90
         ];
+
         $video = Video::create($dados);
-        $this->assertEquals(1,$video->count());
-        $this->assertInstanceOf(Video::class,$video);
-        $this->assertDatabaseHas($video->getTable(),$dados);
+        $this->assertEquals(1, $video->count());
+        $this->assertInstanceOf(Video::class, $video);
+        $this->assertDatabaseHas($video->getTable(), $dados);
     }
 
     public function testIndex()
     {
-        $videos = factory(Video::class,5)->create();;
-        $this->assertEquals(5,$videos->count());
-        $this->assertInstanceOf(Collection::class,$videos);
+        $videos = factory(Video::class, 5)->create();;
+        $this->assertEquals(5, $videos->count());
+        $this->assertInstanceOf(Collection::class, $videos);
     }
 
     public function testUpdate()
     {
         $dados = [
-
+            'titulo' => 'titulo update',
+            'descricao' => 'descricao update',
+            'ano_lancamento' => 2020,
+            'classificacao' => Video::CLASSIFICACOES[1],
+            'duracao' => 120
         ];
         $video = factory(Video::class)->create();
         $video->update($dados);
-        $this->assertInstanceOf(Video::class,$video);
-        $this->assertDatabaseHas($video->getTable(),$dados);
+        $this->assertInstanceOf(Video::class, $video);
+        $this->assertDatabaseHas($video->getTable(), $dados);
     }
 
     public function testDelete()
@@ -51,7 +60,11 @@ class VideoTest extends TestCase
     public function testValidateUuid()
     {
         $dados = [
-
+            'titulo' => 'titulo',
+            'descricao' => 'descricao',
+            'ano_lancamento' => 2010,
+            'classificacao' => Video::CLASSIFICACOES[0],
+            'duracao' => 90
         ];
         $video = Video::create($dados);
         $uuid = $video->id;

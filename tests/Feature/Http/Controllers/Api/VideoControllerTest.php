@@ -148,7 +148,7 @@ class VideoControllerTest extends TestCase
         ];
 
         $this->assertInvalidationDataInStoreAction($dados, 'exists');
-//        $this->assertInvalidationDataInUpdateAction($dados, 'exists');
+        $this->assertInvalidationDataInUpdateAction($dados, 'exists');
     }
 
     public function testInvalidationDateFormat()

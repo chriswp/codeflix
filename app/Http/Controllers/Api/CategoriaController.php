@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Categoria;
+use Illuminate\Validation\Rule;
 
 class CategoriaController extends BasicCrudController
 {
@@ -24,8 +25,9 @@ class CategoriaController extends BasicCrudController
     protected function rulesUpdate()
     {
         return [
-            'nome' => 'required|max:255|unique:categorias,id,'.$this->get('id'),
-            'ativo' => 'boolean'
+            'nome' => ['required','max:255',Rule::unique('categorias')->ignore(request()->route('categoria'))],
+            'ativo' => 'boolean',
+            'descricao' => 'nullable'
         ];
     }
 
