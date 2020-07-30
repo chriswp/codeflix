@@ -20,8 +20,8 @@ class VideoController extends BasicCrudController
             'liberado' => 'boolean',
             'classificacao' => 'required|in:' . implode(',', Video::CLASSIFICACOES),
             'duracao' => 'required|integer',
-            'categorias_id' => 'required|array|exists:categorias,id',
-            'generos_id' => 'required|array|exists:generos,id',
+            'categorias_id' => 'required|array|exists:categorias,id,deleted_at,NULL',
+            'generos_id' => 'required|array|exists:generos,id,deleted_at,NULL',
         ];
     }
 

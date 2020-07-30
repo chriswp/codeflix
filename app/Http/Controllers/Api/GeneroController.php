@@ -20,7 +20,7 @@ class GeneroController extends BasicCrudController
         return [
             'nome' => 'required|max:255|unique:generos',
             'ativo' => 'boolean',
-            'categorias_id' => 'required|array|exists:categorias,id',
+            'categorias_id' => 'required|array|exists:categorias,id,deleted_at,NULL',
         ];
     }
 
@@ -29,7 +29,7 @@ class GeneroController extends BasicCrudController
         return [
             'nome' => ['required', 'max:255', Rule::unique('generos')->ignore(request()->route('genero'))],
             'ativo' => 'boolean',
-            'categorias_id' => 'required|array|exists:categorias,id',
+            'categorias_id' => 'required|array|exists:categorias,id,deleted_at,NULL',
         ];
     }
 
