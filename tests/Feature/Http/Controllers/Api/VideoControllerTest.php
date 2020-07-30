@@ -29,6 +29,7 @@ class VideoControllerTest extends TestCase
         $this->video = factory(Video::class)->create([
             'liberado' => false
         ]);
+
         $this->dadosVideoTest = [
             'titulo' => 'titulo',
             'descricao' => 'descricao',
@@ -91,6 +92,7 @@ class VideoControllerTest extends TestCase
             $this->assertCount(1,Video::all());
         }
     }
+
 
     public function testInvalidationRequired()
     {
