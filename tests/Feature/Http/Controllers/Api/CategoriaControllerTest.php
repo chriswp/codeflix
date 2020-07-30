@@ -38,19 +38,25 @@ class CategoriaControllerTest extends TestCase
             ->assertJson($this->categoria->toArray());
     }
 
-    public function testStoreValidation()
+    public function testInvalidacaoDados()
     {
-        $response = $this->json('POST', route('categorias.store'), []);
-        $this->assertValidationData($response, ['nome'], 'required');
-        $response->assertJsonMissingValidationErrors(['ativo']);
+        $dados = [
+            'nome' => null
+        ];
+        $this->assertInValidationDataInStoreAction($dados,'required');
+        $this->assertInValidationDataInUpdateAction($dados,'required');
 
-        $response = $this->json('POST', route('categorias.store'), [
+        $dados = [
             'nome' => str_repeat('a', 256),
-            'ativo' => 'a'
-        ]);
+        ];
+        $this->assertInValidationDataInStoreAction($dados, 'max.string', ['max' => 255]);
+        $this->assertInValidationDataInUpdateAction($dados, 'max.string', ['max' => 255]);
 
-        $this->assertValidationData($response, ['nome'], 'max.string', ['max' => 255]);
-        $this->assertValidationData($response, ['ativo'], 'boolean');
+        $dados = [
+            'ativo' => 'a'
+        ];
+        $this->assertInValidationDataInStoreAction($dados, 'boolean');
+        $this->assertInValidationDataInUpdateAction($dados, 'boolean');
     }
 
     public function testStore()

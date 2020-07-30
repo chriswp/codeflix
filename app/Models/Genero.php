@@ -15,4 +15,9 @@ class Genero extends Model
     protected $fillable = ['nome','ativo'];
     protected $dates = ['deleted_at'];
 
+    public function categorias()
+    {
+        return $this->belongsToMany(Categoria::class);
+    }
+
 }

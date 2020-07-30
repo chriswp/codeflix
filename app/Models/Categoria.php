@@ -14,4 +14,9 @@ class Categoria extends Model
     protected $casts = ['id' => 'string'];
     protected $fillable = ['nome', 'descricao', 'ativo'];
     protected $dates = ['deleted_at'];
+
+    public function generos()
+    {
+        return $this->belongsToMany(Genero::class);
+    }
 }

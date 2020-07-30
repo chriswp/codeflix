@@ -38,27 +38,38 @@ class ElencoControllerTest extends TestCase
             ->assertJson($this->elenco->toArray());
     }
 
-    public function testStoreValidation()
+    public function testInvalidacaoDados()
     {
-        $response = $this->json('POST', route('elencos.store'), []);
-        $this->assertValidationData($response, ['nome'], 'required');
-        $this->assertValidationData($response, ['tipo'], 'required');
+        $dados = [
+            'nome' => '',
+            'tipo' => ''
+        ];
+        $this->assertInvalidationDataInStoreAction($dados,'required');
+        $this->assertInValidationDataInUpdateAction($dados,'required');
 
-        $response = $this->json('POST', route('elencos.store'), [
-            'nome' => str_repeat('a', 256),
+        $dados = [
+            'nome' => str_repeat('a', 256)
+        ];
+        $this->assertInvalidationDataInStoreAction($dados,'max.string', ['max' => 255]);
+        $this->assertInvalidationDataInUpdateAction($dados,'max.string', ['max' => 255]);
+
+        $dados = [
             'tipo' => 'abc'
-        ]);
+        ];
+        $this->assertInvalidationDataInStoreAction($dados,'numeric');
+        $this->assertInvalidationDataInUpdateAction($dados,'numeric');
 
-        $this->assertValidationData($response, ['nome'], 'max.string', ['max' => 255]);
-        $this->assertValidationData($response, ['tipo'], 'numeric');
+        $dados = $this->elenco->only('nome');
+        $this->assertInvalidationDataInStoreAction($dados,'unique');
 
-        $dadosElenco = $this->elenco->only('nome','tipo');
-        $response = $this->json('POST', route('elencos.store'), $dadosElenco);
-        $this->assertValidationData($response, ['nome'], 'unique');
+        $dadosUpdate = $dados;
+        $this->elenco = factory(Elenco::class)->create();
+        $this->assertInvalidationDataInUpdateAction($dadosUpdate,'unique');
 
-        $dadosElenco['tipo'] = 0;
-        $response = $this->json('POST', route('elencos.store'), $dadosElenco);
-        $this->assertValidationData($response, ['tipo'], 'in');
+         $dados = [
+            'tipo' => 0
+        ];
+        $this->assertInvalidationDataInStoreAction($dados,'in');
     }
 
     public function testStore()
@@ -71,7 +82,6 @@ class ElencoControllerTest extends TestCase
         $response = $this->assertStore($dadosElenco,$dadosElenco);
         $response->assertJsonStructure(['created_at', 'updated_at']);
     }
-
 
     public function testUpdate()
     {
