@@ -74,22 +74,22 @@ class GeneroControllerTest extends TestCase
         ];
         $response = $this->json('POST',$this->routeStore(),$dados);
         $this->assertDatabaseHas('categoria_genero',[
-            'genero_id' => $categoriasId[0],
-            'categoria_id' => $response->json('id'),
+            'genero_id' => $response->json('id'),
+            'categoria_id' => $categoriasId[0],
         ]);
 
         $dados = [
             'nome' => 'genero teste 2',
             'categorias_id' => [$categoriasId[1],$categoriasId[2]]
         ];
-        $response = $this->json('PUT',$this->routeStore(),$dados);
+        $response = $this->json('PUT',$this->routeUpdate(),$dados);
         $this->assertDatabaseHas('categoria_genero',[
-            'genero_id' => $categoriasId[1],
-            'categoria_id' => $response->json('id'),
+            'genero_id' => $response->json('id'),
+            'categoria_id' => $categoriasId[1],
         ]);
         $this->assertDatabaseHas('categoria_genero',[
-            'genero_id' => $categoriasId[2],
-            'categoria_id' => $response->json('id'),
+            'genero_id' => $response->json('id'),
+            'categoria_id' => $categoriasId[2],
         ]);
     }
 
