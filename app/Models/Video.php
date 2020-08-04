@@ -31,11 +31,11 @@ class Video extends Model
 
     public function categorias()
     {
-        return $this->belongsToMany(Categoria::class);
+        return $this->belongsToMany(Categoria::class)->withTrashed();
     }
 
     public function generos()
     {
-        return $this->belongsToMany(Genero::class);
+        return $this->belongsToMany(Genero::class)->withTrashed();
     }
 }
