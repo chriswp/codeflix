@@ -78,7 +78,73 @@ class VideoControllerTest extends TestCase
 
         $this->assertHasCategory($response->json('id'), $categoria->id);
         $this->assertHasGenre($response->json('id'), $genero->id);
+    }
 
+    public function testSyncCategories()
+    {
+        $categoriasId = factory(Categoria::class, 3)->create()->pluck('id')->toArray();
+        $genero = factory(Genero::class)->create();
+        $genero->categorias()->sync($categoriasId);
+
+        $dadosTeste = $this->dadosVideoTest + [
+                'categorias_id' => [$categoriasId[0]],
+                'generos_id' => [$genero->id]
+            ];
+        $response = $this->json('POST', $this->routeStore(), $dadosTeste);
+        $this->assertDatabaseHas('categoria_video', [
+            'video_id' => $response->json('id'),
+            'categoria_id' => $categoriasId[0],
+        ]);
+
+        $dadosTesteUpdate = $this->dadosVideoTest + [
+                'categorias_id' => [$categoriasId[1], $categoriasId[2]],
+                'generos_id' => [$genero->id, $genero->id]
+            ];;
+        $response = $this->json('PUT', $this->routeUpdate(), $dadosTesteUpdate);
+
+        $this->assertDatabaseHas('categoria_video', [
+            'video_id' => $response->json('id'),
+            'categoria_id' => $categoriasId[1],
+        ]);
+        $this->assertDatabaseHas('categoria_video', [
+            'video_id' => $response->json('id'),
+            'categoria_id' => $categoriasId[2],
+        ]);
+    }
+
+    public function testSyncGenres()
+    {
+        $generos = factory(Genero::class,3)->create();
+        $generosId = $generos->pluck('id')->toArray();
+        $categoriaId = factory(Categoria::class)->create()->id;
+        $generos->each(function ($genero) use($categoriaId){
+            $genero->categorias()->sync($categoriaId);
+        });
+
+        $dadosTeste = $this->dadosVideoTest + [
+                'categorias_id' => [$categoriaId],
+                'generos_id' => [$generosId[0]]
+            ];
+        $response = $this->json('POST', $this->routeStore(), $dadosTeste);
+        $this->assertDatabaseHas('genero_video', [
+            'video_id' => $response->json('id'),
+            'genero_id' => $generosId[0],
+        ]);
+
+        $dadosTesteUpdate = $this->dadosVideoTest + [
+                'categorias_id' => [$categoriaId],
+                'generos_id' => [$generosId[1], $generosId[2]]
+            ];;
+        $response = $this->json('PUT', $this->routeUpdate(), $dadosTesteUpdate);
+
+        $this->assertDatabaseHas('genero_video', [
+            'video_id' => $response->json('id'),
+            'genero_id' => $generosId[1],
+        ]);
+        $this->assertDatabaseHas('genero_video', [
+            'video_id' => $response->json('id'),
+            'genero_id' => $generosId[2],
+        ]);
     }
 
     public function testRollbackStore()
