@@ -44,6 +44,7 @@ class VideoTest extends TestCase
                 'liberado',
                 'classificacao',
                 'duracao',
+                'video_arquivo',
                 'created_at',
                 'updated_at',
                 'deleted_at',
