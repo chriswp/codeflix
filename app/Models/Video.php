@@ -17,6 +17,7 @@ class Video extends Model
 
     public $incrementing = false;
     protected $keyType = 'string';
+    public static $fileFields = ['video_arquivo'];
     protected $casts = [
         'id' => 'string',
         'ano_lancamento' => 'integer',
@@ -30,9 +31,10 @@ class Video extends Model
         'ano_lancamento',
         'liberado',
         'classificacao',
-        'duracao'
+        'duracao',
+        'video_arquivo'
     ];
-
+    
     public static function create(array $attributes = [])
     {
         $files = self::extractFiles($attributes);

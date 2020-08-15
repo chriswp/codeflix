@@ -21,6 +21,7 @@ class CreateVideosTable extends Migration
             $table->boolean('liberado')->default(false);
             $table->string('classificacao',3);
             $table->integer('duracao');
+            $table->string('video_arquivo')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
