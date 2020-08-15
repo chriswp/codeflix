@@ -117,6 +117,7 @@ return [
     'uploaded' => 'The :attribute failed to upload.',
     'url' => 'The :attribute format is invalid.',
     'uuid' => 'The :attribute must be a valid UUID.',
+    'genero_has_categoria' => 'A genre ID must be related at least a category ID',
 
     /*
     |--------------------------------------------------------------------------

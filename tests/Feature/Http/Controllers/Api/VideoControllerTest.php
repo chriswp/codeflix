@@ -59,6 +59,8 @@ class VideoControllerTest extends TestCase
     {
         $categoria = factory(Categoria::class)->create();
         $genero = factory(Genero::class)->create();
+        $genero->categorias()->sync($categoria->id);
+
         $response = $this->assertStore($this->dadosVideoTest + [
                 'categorias_id' => [$categoria->id],
                 'generos_id' => [$genero->id]
@@ -134,7 +136,7 @@ class VideoControllerTest extends TestCase
         $dadosTesteUpdate = $this->dadosVideoTest + [
                 'categorias_id' => [$categoriaId],
                 'generos_id' => [$generosId[1], $generosId[2]]
-            ];;
+            ];
         $response = $this->json('PUT', $this->routeUpdate(), $dadosTesteUpdate);
 
         $this->assertDatabaseHas('genero_video', [
@@ -156,6 +158,10 @@ class VideoControllerTest extends TestCase
         $controller->shouldReceive('validate')
             ->withAnyArgs()
             ->andReturn($this->dadosVideoTest);
+
+        $controller->shouldReceive('addRuleSeGeneroPossuiCategorias')
+            ->withAnyArgs()
+            ->andReturn([]);
 
         $controller->shouldReceive('rulesStore')
             ->withAnyArgs()
@@ -186,6 +192,10 @@ class VideoControllerTest extends TestCase
         $controller->shouldReceive('findOrFail')
             ->withAnyArgs()
             ->andReturn($this->video);
+
+        $controller->shouldReceive('addRuleSeGeneroPossuiCategorias')
+            ->withAnyArgs()
+            ->andReturn([]);
 
         $controller->shouldReceive('validate')
             ->withAnyArgs()

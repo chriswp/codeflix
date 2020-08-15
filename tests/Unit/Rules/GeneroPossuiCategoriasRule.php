@@ -64,7 +64,7 @@ class GeneroPossuiCategoriasRuleTest extends TestCase
         $this->assertFalse($rule->passes('', [1]));
     }
 
-    public function testRetonraFlaseQuandoTemCategoriaSemGenero()
+    public function testRetornaFalseQuandoTemCategoriaSemGenero()
     {
         $rule = $this->createRuleMock([1, 2]);
         $rule->shouldReceive('getCategoriasPorGeneros')
@@ -79,6 +79,17 @@ class GeneroPossuiCategoriasRuleTest extends TestCase
         $rule->shouldReceive('getCategoriasPorGeneros')
             ->withAnyArgs()
             ->andReturn(collect([
+                ['categoria_id' => 1],
+                ['categoria_id' => 2],
+            ]));
+        $this->assertTrue($rule->passes('', [1]));
+
+        $rule = $this->createRuleMock([1, 2]);
+        $rule->shouldReceive('getCategoriasPorGeneros')
+            ->withAnyArgs()
+            ->andReturn(collect([
+                ['categoria_id' => 1],
+                ['categoria_id' => 2],
                 ['categoria_id' => 1],
                 ['categoria_id' => 2],
             ]));

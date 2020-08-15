@@ -34,6 +34,10 @@ class GeneroPossuiCategoriasRule implements Rule
      */
     public function passes($attribute, $value)
     {
+        if (!is_array($value)) {
+            $value = [];
+        }
+
         $this->generosId = array_unique($value);
         if (!count($this->generosId) || !count($this->categoriasId)) {
             return false;
@@ -47,7 +51,7 @@ class GeneroPossuiCategoriasRule implements Rule
             }
             array_push($categoriasEncontradas, ...$categoriasPorGenero->pluck('categoria_id')->toArray());
         }
-
+        $categoriasEncontradas = array_unique($categoriasEncontradas);
         if (count($categoriasEncontradas) !== count($this->categoriasId)) {
             return false;
         }
@@ -70,6 +74,6 @@ class GeneroPossuiCategoriasRule implements Rule
      */
     public function message()
     {
-        return 'O genero deve possuir ao menos uma categoria';
+        return trans('validation.genero_has_categoria');
     }
 }
