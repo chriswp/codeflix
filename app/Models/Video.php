@@ -3,19 +3,20 @@
 namespace App\Models;
 
 use App\Models\Traits\GenerateUuid;
+use App\Models\Traits\UploadFiles;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class Video extends Model
 {
-    use SoftDeletes, GenerateUuid;
+    use SoftDeletes, GenerateUuid, UploadFiles;
 
     const CLASSIFICACOES = ['L', '10', '12', '14', '16', '18'];
 
     public $incrementing = false;
     protected $keyType = 'string';
+    public static $fileFields = ['filme','banner','trailer'];
     protected $casts = [
         'id' => 'string',
         'ano_lancamento' => 'integer',
@@ -34,12 +35,13 @@ class Video extends Model
 
     public static function create(array $attributes = [])
     {
+        $files = self::extractFiles($attributes);
         try {
             DB::beginTransaction();
             /** @var Video $obj */
             $obj = static::query()->create($attributes);
             static::handleRelations($obj,$attributes);
-            //TODO implementar upload
+            $obj->uploadFiles($files);
             DB::commit();
             return $obj;
         } catch (\Exception $e) {
@@ -92,4 +94,11 @@ class Video extends Model
     {
         return $this->belongsToMany(Genero::class)->withTrashed();
     }
+
+    protected function uploadDir()
+    {
+        return $this->id;
+    }
+
+
 }
