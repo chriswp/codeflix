@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Traits\GenerateUuid;
 use App\Models\Traits\UploadFiles;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,6 @@ class Video extends Model
 
     public $incrementing = false;
     protected $keyType = 'string';
-    public static $fileFields = ['filme','banner','trailer'];
     protected $casts = [
         'id' => 'string',
         'ano_lancamento' => 'integer',
@@ -44,7 +44,7 @@ class Video extends Model
             $obj->uploadFiles($files);
             DB::commit();
             return $obj;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             if (isset($obj)) {
                 //TODO excluir os arquivos de upload
             }
@@ -66,7 +66,7 @@ class Video extends Model
             //TODO implementar upload
             DB::commit();
             return $saved;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             //TODO excluir os arquivos de upload
             DB::rollBack();
             throw $e;
