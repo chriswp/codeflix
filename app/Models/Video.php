@@ -5,14 +5,17 @@ namespace App\Models;
 use App\Models\Traits\GenerateUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class Video extends Model
 {
     use SoftDeletes, GenerateUuid;
 
-    const CLASSIFICACOES = ['L','10','12','14','16','18'];
+    const CLASSIFICACOES = ['L', '10', '12', '14', '16', '18'];
 
     public $incrementing = false;
+    protected $keyType = 'string';
     protected $casts = [
         'id' => 'string',
         'ano_lancamento' => 'integer',
@@ -28,6 +31,57 @@ class Video extends Model
         'classificacao',
         'duracao'
     ];
+
+    public static function create(array $attributes = [])
+    {
+        try {
+            DB::beginTransaction();
+            /** @var Video $obj */
+            $obj = static::query()->create($attributes);
+            static::handleRelations($obj,$attributes);
+            //TODO implementar upload
+            DB::commit();
+            return $obj;
+        } catch (\Exception $e) {
+            if (isset($obj)) {
+                //TODO excluir os arquivos de upload
+            }
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function update(array $attributes = [], array $options = [])
+    {
+        try {
+            DB::beginTransaction();
+            $saved = parent::update($attributes, $options);
+            static::handleRelations($this,$attributes);
+            if ($saved) {
+                //TODO realizar upload
+                //TODO excluir os arquivos antigos
+            }
+            //TODO implementar upload
+            DB::commit();
+            return $saved;
+        } catch (\Exception $e) {
+            //TODO excluir os arquivos de upload
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public static function handleRelations(Video $video, array $attributes)
+    {
+        if (isset($attributes['categorias_id'])) {
+            $video->categorias()->sync($attributes['categorias_id']);
+        }
+
+        if (isset($attributes['generos_id'])) {
+            $video->generos()->sync($attributes['generos_id']);
+        }
+    }
+
 
     public function categorias()
     {

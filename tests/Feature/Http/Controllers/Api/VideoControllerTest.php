@@ -2,13 +2,10 @@
 
 namespace Tests\Feature\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\VideoController;
 use App\Models\Categoria;
 use App\Models\Genero;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Http\Request;
-use Tests\Exception\TestExcepiton;
 use Tests\TestCase;
 use Tests\Traits\SaveDataTest;
 use Tests\Traits\ValidationsTest;
@@ -82,7 +79,7 @@ class VideoControllerTest extends TestCase
         $this->assertHasGenre($response->json('id'), $genero->id);
     }
 
-    public function testSyncCategories()
+   /* public function testSyncCategories()
     {
         $categoriasId = factory(Categoria::class, 3)->create()->pluck('id')->toArray();
         $genero = factory(Genero::class)->create();
@@ -147,9 +144,9 @@ class VideoControllerTest extends TestCase
             'video_id' => $response->json('id'),
             'genero_id' => $generosId[2],
         ]);
-    }
+    }*/
 
-    public function testRollbackStore()
+  /*  public function testRollbackStore()
     {
         $controller = \Mockery::mock(VideoController::class)
             ->makePartial()
@@ -219,7 +216,7 @@ class VideoControllerTest extends TestCase
         }
 
         $this->assertTrue($hasError);
-    }
+    }*/
 
 
     public function testInvalidationRequired()

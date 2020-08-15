@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Models\Video;
 use App\Rules\GeneroPossuiCategoriasRule;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class VideoController extends BasicCrudController
 {
@@ -43,14 +42,9 @@ class VideoController extends BasicCrudController
 
     public function store(Request $request)
     {
-        $self = $this;
         $this->addRuleSeGeneroPossuiCategorias($request);
         $validationData = $this->validate($request, $this->rulesStore());
-        $video = DB::transaction(function () use ($validationData, $request, $self) {
-            $video = $this->model()::create($validationData);
-            $self->handleRelations($video, $request);
-            return $video;
-        });
+        $video = $this->model()::create($validationData);
         $video->refresh();
 
         return $video;
@@ -58,15 +52,10 @@ class VideoController extends BasicCrudController
 
     public function update(Request $request, $id)
     {
-        $self = $this;
         $video = $this->firstOrFail($id);
         $this->addRuleSeGeneroPossuiCategorias($request);
         $validationData = $this->validate($request, $this->rulesUpdate());
-        $video = DB::transaction(function () use ($validationData, $request, $self, $video) {
-            $video->update($validationData);
-            $self->handleRelations($video, $request);
-            return $video;
-        });
+        $video->update($validationData);
 
         return $video;
     }
@@ -78,9 +67,4 @@ class VideoController extends BasicCrudController
         $this->rules['generos_id'][] = new GeneroPossuiCategoriasRule($categoriasId);
     }
 
-    protected function handleRelations($video, Request $request)
-    {
-        $video->categorias()->sync($request->get('categorias_id'));
-        $video->generos()->sync($request->get('generos_id'));
-    }
 }
